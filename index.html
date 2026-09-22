@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İl Emri Tweet Kuyruğu</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f7fb;color:#172033}
+.wrap{max-width:760px;margin:0 auto;padding:32px 18px 60px}
+.card{background:#fff;border:1px solid #e6e9ef;border-radius:22px;padding:28px;box-shadow:0 10px 30px rgba(20,30,50,.07)}
+h1{margin:0 0 8px;font-size:30px}.sub{color:#697386;margin:0 0 24px;line-height:1.5}
+.tweet{background:#f7f9fc;border:1px solid #e3e7ef;border-radius:16px;padding:20px;font-size:18px;line-height:1.6;min-height:170px;white-space:pre-wrap}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+button{border:0;border-radius:12px;padding:13px 17px;font-size:15px;font-weight:700;cursor:pointer}
+.primary{background:#111827;color:white}.secondary{background:#e9edf4;color:#172033}
+.meta{display:flex;justify-content:space-between;color:#7a8495;font-size:13px;margin-top:12px}
+.notice{margin-top:18px;font-size:13px;color:#697386;line-height:1.5}
+.badge{display:inline-block;background:#eef4ff;color:#2457c5;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <span class="badge">İL EMRİ KAMPANYASI</span>
+    <h1>Tweet Kuyruğu</h1>
+    <p class="sub">Hazır metinlerden birini seçin. “X'te Paylaş” butonuyla metni X'e aktarın; son gönderimi siz yaparsınız.</p>
+    <div id="tweet" class="tweet"></div>
+    <div class="meta"><span id="counter"></span><span>Metinler yerel olarak çalışır.</span></div>
+    <div class="actions">
+      <button class="secondary" onclick="previousTweet()">← Önceki</button>
+      <button class="secondary" onclick="nextTweet()">Yeni Metin</button>
+      <button class="primary" onclick="shareTweet()">𝕏 X'te Paylaş</button>
+      <button class="secondary" onclick="copyTweet()">Metni Kopyala</button>
+    </div>
+    <p class="notice">Not: Bu araç otomatik paylaşım yapmaz. X açıldığında metni kontrol edip gönderme işlemini kendiniz yaparsınız.</p>
+  </div>
+</div>
+<script>
+const tweets = [
+"Sayın Emine Erdoğan, mazeret tayini gerçekleşmeyen öğretmenlerin aile bütünlüğü için İL EMRİ talebini duyurmanızı ve Sayın Bakanımıza iletmenizi rica ediyoruz. Öğretmenler de ailelerine kavuşmak istiyor. #İlEmriMüjdesi",
+"Sayın Emine Erdoğan, ailesinden ayrı kalmak zorunda bırakılan öğretmenlerin sesini duyun. Mazeret tayini çıkmayan öğretmenler için İL EMRİ verilmesini ve aile bütünlüğümüzün korunmasını istiyoruz. Lütfen sesimiz olun. #İlEmriMüjdesi",
+"Biz öğretmenler görevimizi yaparken ailelerimizden ayrı yaşamak istemiyoruz. Mazeret tayini gerçekleşmeyen öğretmenler için İL EMRİ talep ediyoruz. Sayın Emine Erdoğan, bu mağduriyetimizi Sayın Bakanımıza ulaştırmanızı rica ediyoruz.",
+"Sayın Emine Erdoğan, aile bütünlüğü hepimiz için çok kıymetli. Mazeret tayini gerçekleşmeyen öğretmenlerin eşlerine ve ailelerine kavuşabilmesi için İL EMRİ bekliyoruz. Sesimizi duyarsanız binlerce öğretmenin umudu olacaksınız. #İlEmri",
+"Öğretmenler olarak tek isteğimiz ailelerimizden ayrı kalmadan görevimizi sürdürebilmek. Mazeret tayini çıkmayanlar için İL EMRİ verilmesini talep ediyoruz. Sayın Emine Erdoğan, desteğinizi ve sesimizi duyurmanızı bekliyoruz. 🙏",
+"Sayın Emine Erdoğan, bizler de ailelerimize kavuşmak istiyoruz. Mazeret tayininde yerleşemeyen öğretmenlerin mağduriyetinin İL EMRİ ile giderilmesini talep ediyoruz. Lütfen bu çağrımızı Sayın Bakanımıza ulaştırın. #İlEmriMüjdesi",
+"Bir öğretmenin en büyük motivasyonlarından biri ailesinin yanında olabilmesidir. Mazeret tayini gerçekleşmeyen öğretmenler için İL EMRİ talebimizi duyurmanızı rica ediyoruz. Aileler daha fazla ayrı kalmasın.",
+"Sayın Emine Erdoğan, öğretmenlerin aile bütünlüğünü koruyacak bir çözüm beklediğini bilmenizi isteriz. Mazeret tayini gerçekleşmeyen öğretmenler için İL EMRİ istiyoruz. Lütfen sesimizi duyun ve destek olun.",
+"Bizler eşlerimizden ve ailelerimizden ayrı yaşamak istemiyoruz. Mazeret tayini gerçekleşmeyen öğretmenlerin mağduriyetine çözüm olarak İL EMRİ talep ediyoruz. Sayın Emine Erdoğan, ricamız sesimizi duyurmanızdır. #İlEmri",
+"Sayın Emine Erdoğan, öğretmenlerin de aileleri var. Mazeret tayini gerçekleşmeyen öğretmenler için İL EMRİ verilmesini istiyoruz. Aile bütünlüğümüzün korunması adına çağrımızı duyurmanızı rica ediyoruz. 🙏 #İlEmriMüjdesi"
+];
+
+let i=0;
+function render(){document.getElementById("tweet").textContent=tweets[i];document.getElementById("counter").textContent=`${i+1} / ${tweets.length}`;}
+function nextTweet(){i=(i+1)%tweets.length;render();}
+function previousTweet(){i=(i-1+tweets.length)%tweets.length;render();}
+function shareTweet(){window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(tweets[i]),"_blank","noopener,noreferrer");}
+async function copyTweet(){try{await navigator.clipboard.writeText(tweets[i]);alert("Metin kopyalandı.");}catch(e){alert("Kopyalama başarısız. Metni seçip kopyalayabilirsiniz.");}}
+render();
+</script>
+</body>
+</html>
